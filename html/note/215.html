@@ -1,0 +1,37 @@
+<!doctype html><title>MongoDB 多层数组对象 筛选局部更新 - 代码 - 卜卜口</title><meta name=viewport content=width=device-width,user-scalable=0><link rel=stylesheet href=/static/css/index.css?suffix=1hlsbpv><meta name=apple-mobile-web-app-capable content=yes><meta name=apple-mobile-web-app-status-bar-style content=black-translucent><link rel=apple-touch-icon-precomposed href=/static/img/projects/mouto.org-icon.svg><link rel=alternate type=application/rss+xml title="卜卜口 RSS 2.0" href=/rss.xml.xml><link rel=manifest href=/manifest.json crossorigin=use-credentials><header><nav><a href=/ ><b>卜卜口</b></a><a href=/projects><b>项目</b></a><a href=/photos?star=1><b>写真</b></a><a href=/notes class=active><b>笔记</b></a><a href=/links><b>链接</b></a></nav></header><div id=M><div class=view-box view=note><div class="article-single-box layout"><div class=head><h1>MongoDB 多层数组对象 筛选局部更新</h1><p><a href=/ class=user-link><img src=/static/img/avatar.jpg>卜卜口</a><a href=/photos?type=code>代码</a><time datetime="2018-11-17 23:29:14">2018-11-17</time></div><div class=content><h3>数据格式样例</h3><pre><code>{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;_id&quot; : ObjectId(&quot;...&quot;), 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;id&quot; : 2102855644, 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;title&quot; : &quot;その未来へ&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&quot;disks&quot; : [ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;title&quot; : &quot;disc 1&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;tracks&quot; : [ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;id&quot; : 1796759555, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;title&quot; : &quot;その未来へ&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;sub&quot; : &quot;电视动画「泥鲸之子们在沙地上歌唱」OP / TVアニメ『クジラの子らは砂上に歌う』オープニングテーマ&quot;, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;duration&quot; : 256, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;fix&quot; : true 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;] 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}, 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;] 
+} 
+</code></pre><p>目标是更新 <code>track</code> 中的 <code>fix</code> 为 <code>false</code>，同时不影响其他同层级的数据<p>在更新时临时命名 <code>track</code>，然后借助 <code>arrayFilters</code> 在更新时进行过滤<h3>实现</h3><pre><code class=javascript>db.albums.update( 
+&nbsp;&nbsp;&nbsp;&nbsp;{ &#39;disks.tracks.id&#39;: 1796759555 }, 
+&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$inc:{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#39;disks.$[].tracks.$[track].fix&#39;:false 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;},{ 
+&nbsp;&nbsp;&nbsp;&nbsp;arrayFilters: [ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;track.id&quot;: 1796759555 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;], 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;multi: false 
+&nbsp;&nbsp;&nbsp;&nbsp;} 
+) 
+</code></pre><h3>文档</h3><p>https://docs.mongodb.com/manual/reference/operator/update/positional-all/#update-nested-arrays-in-conjunction-with-identifier</div><div class=cm-article data-key=v3|215></div></div></div></div><script src=/static/js/build.js?suffix=1hlsbpv></script>

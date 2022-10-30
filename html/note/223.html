@@ -1,0 +1,47 @@
+<!doctype html><title>VueQuillEditor 如何添加自定义字体？ - 代码 - 卜卜口</title><meta name=viewport content=width=device-width,user-scalable=0><link rel=stylesheet href=/static/css/index.css?suffix=1hlsbpv><meta name=apple-mobile-web-app-capable content=yes><meta name=apple-mobile-web-app-status-bar-style content=black-translucent><link rel=apple-touch-icon-precomposed href=/static/img/projects/mouto.org-icon.svg><link rel=alternate type=application/rss+xml title="卜卜口 RSS 2.0" href=/rss.xml.xml><link rel=manifest href=/manifest.json crossorigin=use-credentials><header><nav><a href=/ ><b>卜卜口</b></a><a href=/projects><b>项目</b></a><a href=/photos?star=1><b>写真</b></a><a href=/notes class=active><b>笔记</b></a><a href=/links><b>链接</b></a></nav></header><div id=M><div class=view-box view=note><div class="article-single-box layout"><div class=head><h1>VueQuillEditor 如何添加自定义字体？</h1><p><a href=/ class=user-link><img src=/static/img/avatar.jpg>卜卜口</a><a href=/photos?type=code>代码</a><time datetime="2019-01-21 13:42:06">2019-1-21</time></div><div class=content><p>Quill 编辑自定义字体列表还比较麻烦的，总结了下最终的解决方法<h3>首先配置的时候编辑下允许使用的字体们</h3><pre><code class=JavaScript>import Vue from &#39;vue&#39;; 
+import VueQuillEditor from &#39;vue-quill-editor&#39;; 
+Vue.use(VueQuillEditor);
+
+let fonts = [&#39;宋体&#39;,&#39;黑体&#39;,&#39;艺术字&#39;];
+
+let Font = VueQuillEditor.Quill.import(&#39;formats/font&#39;); 
+Font.whitelist = API.font; 
+VueQuillEditor.Quill.register(Font, true); 
+</code></pre><h3>配置编辑器的时候把之前设置的字体加上</h3><pre><code class=JavaScript>{ 
+&nbsp;&nbsp;&nbsp;&nbsp;modules:{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;toolbar:{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;container:[ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#39;font&#39;: [&#39;宋体&#39;,&#39;黑体&#39;,&#39;艺术字&#39;] 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}], 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;... 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;] 
+&nbsp;&nbsp;&nbsp;&nbsp;... 
+</code></pre><h3>下拉列表的文字通过样式根据 <code>DOM</code> 上的 <code>data-value</code> 属性显示</h3><pre><code class=SCSS>.quill-editor{ 
+&nbsp;&nbsp;&nbsp;&nbsp;.ql-font{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.ql-picker-label{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;[data-value]::before { 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content:attr(data-value); 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.ql-picker-options{ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;span[data-value]::before { 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content:attr(data-value); 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} 
+&nbsp;&nbsp;&nbsp;&nbsp;} 
+}
+
+.ql-font-宋体 { 
+&nbsp;&nbsp;&nbsp;&nbsp;font-family: &quot;宋体&quot;,serif; 
+}
+
+.ql-font-黑体 { 
+&nbsp;&nbsp;&nbsp;&nbsp;font-family: &quot;黑体&quot;,sans-serif; 
+}
+
+.ql-font-艺术字 { 
+&nbsp;&nbsp;&nbsp;&nbsp;font-family: &quot;艺术字&quot;,sans-serif; 
+} 
+</code></pre></div><div class=cm-article data-key=v3|223></div></div></div></div><script src=/static/js/build.js?suffix=1hlsbpv></script>

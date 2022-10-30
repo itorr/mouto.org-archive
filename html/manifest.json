@@ -1,0 +1,16 @@
+{
+	"name": "卜卜口",
+	"short_name": "卜卜口",
+	"description": "卜卜口的个人博客",
+	"display": "standalone",
+	"start_url": "/",
+	"theme_color": "#fff",
+	"background_color": "#fff",
+	"icons": [
+		{
+			"src": "/static/img/avatar.jpg",
+			"sizes": "440x440",
+			"type": "image/webp"
+		}
+	]
+}
